@@ -1,33 +1,34 @@
-// app.js
-
+// load modules
 const express = require('express');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
+const dotenv = require("dotenv")/** install */
+const connectDB = require('./config/db');
+const fileUpload = require("express-fileupload"); /** install */
+const cors = require('cors'); /** install */
 
+// load env vars
+dotenv.config({ path: './config/config.env' });
 const productRouter = require('./routes/product');
 
 const app = express();
 
 // Set up mongoose connection
+connectDB()
 
-const mongoDB = process.env.MONGODB_URI;
 
-mongoose.connect(mongoDB);
-mongoose.Promise = global.Promise;
+// set up bodyparser middleware
+app.use(fileUpload())
+app.use(express.json());
 
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+// Enable cors
+app.use(cors());
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+// Set static folder
+// app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/product', productRouter);
+app.use('/', productRouter);
 
-const port = 3001;
+const PORT = 5000;
 
-db.once('open', function() {
-    console.log('Connected!');
-    app.listen(port, () => {
-        console.log('Server is up and running on port numner ' + port);
-    });
-});
+app.listen(PORT, () =>
+  console.log(`Server running on port ${PORT}`)
+);

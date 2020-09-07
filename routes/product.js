@@ -6,10 +6,10 @@ var product_controller = require('../controllers/product');
 
 
 // a simple test url to check that all of our files are communicating correctly.
-router.get('/test', product_controller.test);
+router.get('/', product_controller.getAllProducts);
 
 
-router.post('/create', product_controller.product_create);
+router.post('/create', product_controller.AddProduct);
 
 router.get('/:id', product_controller.product_details);
 

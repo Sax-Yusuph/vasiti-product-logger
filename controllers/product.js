@@ -1,16 +1,28 @@
 var Product = require('../models/product');
 
 //Simple version, without validation or sanitation
-exports.test = function (req, res) {
-    res.send('Greetings from the Test controller!');
+exports.getAllProducts = function (req, res) {
+    res.send({"desc": "All Products", "type": "Get"});
 };
 
-exports.product_create = function (req, res) {
-    var product = new Product(
-        {
-            name: req.body.name,
-            price: req.body.price
+exports.AddProduct = function (req, res) {
+      const file = req.files.file;
+      if(file){
+          file.mv(`${__dirname}/client/public/uploads/${file.name}`, err => {
+            if (err) {
+              console.error(err);
+              res.status(500).send(err);
+            }
+          });
         }
+    //    res.json({ fileName: file.name, filePath: `/uploads/${file.name}` });
+
+    var product = new Product(
+        {"size":Number(req.body.size),
+        "color":req.body.color,
+        "quantity":Number(req.body.quantity),
+        "images":[req.files[0], req.files.file[1]],
+        "price":req.body.price}
     );
 
     product.save(function (err) {
